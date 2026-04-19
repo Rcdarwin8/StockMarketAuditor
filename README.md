@@ -73,58 +73,23 @@ StockMarketAuditor/
 ## 🚀 Setup Instructions
 
 ### Prerequisites
+
 1. **Java JDK 11+** installed
 2. **Maven 3.6+** installed
-3. **Google Chrome** browser installed
-4. **Internet connection** for web scraping
-
-### Installation Steps
-
-1. **Clone or Extract the Project**
-   ```bash
-   cd /home/user/StockMarketAuditor
-   ```
-
-2. **Install Dependencies**
-   ```bash
-   mvn clean install
-   ```
-
-3. **Run the Application**
-   ```bash
-   mvn exec:java -Dexec.mainClass="com.stockauditor.StockMarketAuditor"
-   ```
-
-   Or compile and run directly:
-   ```bash
-   mvn clean package
-   java -jar target/stock-market-auditor-1.0-SNAPSHOT.jar
-   ```
-
+ 
 ---
 
 ## 🌐 Target Websites
 
 ### Primary Source: MoneyControl Top Gainers
 - **URL**: https://www.moneycontrol.com/stocks/marketstats/nsegainer/index.php
+
 - **Data Extracted**:
   - Company Name (Column 1)
   - Previous Close Price (Column 3)
   - Current Price (Column 4)
   - Percentage Change (Column 5) - for validation
-
-### XPath Strategy
-```java
-// Row indexing (skip header)
-String rowXPath = "//table[contains(@class, 'mctable')]//tr[" + (rowIndex + 1) + "]";
-
-// Cell extraction with column indexing
-String companyNameXPath = rowXPath + "/td[1]//a";
-String prevCloseXPath = rowXPath + "/td[3]";
-String currentPriceXPath = rowXPath + "/td[4]";
-String changePercentXPath = rowXPath + "/td[5]";
-```
-
+ 
 ---
 
 ## 📊 Data Processing Pipeline
@@ -212,118 +177,6 @@ High Performers: 8
 
 ---
 
-## ⚙️ Configuration Options
-
-### Modify High Performance Threshold
-```java
-// In ExcelReporter.java
-private static final double HIGH_PERFORMANCE_THRESHOLD = 5.0; // Change to 3.0, 7.0, etc.
-```
-
-### Change Output Directory
-```java
-// In StockMarketAuditor.java
-private static final String OUTPUT_DIRECTORY = "/mnt/user-data/outputs/";
-```
-
-### Enable Headless Mode (No Browser UI)
-```java
-// In initializeWebDriver() method
-options.addArguments("--headless");
-```
-
-### Increase/Decrease Stock Count
-```java
-// In WebTableScraper.java
-int maxRows = Math.min(rows.size(), 15); // Change 15 to desired count
-```
-
----
-
-## 🧪 Testing Recommendations
-
-1. **Unit Testing** (Optional with JUnit):
-   ```java
-   @Test
-   public void testPercentageCalculation() {
-       StockData stock = new StockData("TestStock", 100.0, 110.0);
-       assertEquals(10.0, stock.getCalculatedChangePercent(), 0.01);
-   }
-   ```
-
-2. **Integration Testing**:
-   - Test with different websites
-   - Test with edge cases (zero prices, negative changes)
-   - Test Excel formatting with various data sizes
-
-3. **Performance Testing**:
-   - Measure scraping time for different stock counts
-   - Monitor memory usage during Excel generation
-
----
-
-## 🐛 Troubleshooting
-
-### Issue: ChromeDriver Not Found
-**Solution**: WebDriverManager should auto-download it. If not:
-```bash
-mvn clean install -U
-```
-
-### Issue: WebTable Not Loading
-**Solution**: Increase wait time in WebTableScraper:
-```java
-wait.until(ExpectedConditions.presenceOfElementLocated(...), Duration.ofSeconds(30));
-```
-
-### Issue: Excel File Not Generated
-**Solution**: Check output directory permissions:
-```bash
-mkdir -p /mnt/user-data/outputs
-chmod 755 /mnt/user-data/outputs
-```
-
-### Issue: Data Cleaning Errors
-**Solution**: Add debug logging:
-```java
-System.out.println("Original text: " + priceText);
-System.out.println("Cleaned text: " + cleaned);
-```
-
----
-
-## 📝 Code Highlights
-
-### Complex XPath Indexing
-```java
-// Navigate through table structure with precise indexing
-String rowXPath = "//table[contains(@class, 'mctable')]//tr[" + (i + 1) + "]";
-String cellXPath = rowXPath + "/td[" + columnIndex + "]";
-```
-
-### Data Cleaning & Type Casting
-```java
-// Remove special characters and convert to double
-String cleaned = priceText.replaceAll("[₹$,\\s]", "").trim();
-double price = Double.parseDouble(cleaned);
-```
-
-### Validation with Tolerance
-```java
-// Allow 0.1% tolerance for rounding differences
-double tolerance = 0.1;
-boolean isValid = Math.abs(calculated - website) <= tolerance;
-```
-
-### Excel Custom Formatting
-```java
-// Create percentage style with custom format
-CellStyle percentStyle = workbook.createCellStyle();
-percentStyle.setDataFormat(workbook.createDataFormat().getFormat("0.00\"%\""));
-```
-
----
-
 ## 🎓 Learning Outcomes
 
 By studying this project, you'll learn:
@@ -354,23 +207,6 @@ By studying this project, you'll learn:
 
 This project is provided as-is for educational and commercial use.
 
----
-
-## 👨‍💻 Author
-
-**Stock Market Auditor System**  
-Version: 1.0  
-Created: 2026-01-02
-
----
-
-## 📞 Support
-
-For questions or issues:
-1. Check the Troubleshooting section
-2. Review console logs for error messages
-3. Verify website structure hasn't changed
-4. Test with alternative data sources
 
 ---
 
