@@ -32,7 +32,7 @@ StockMarketAuditor/
 
 ## Prerequisites
 
-Java JDK 11+, Maven 3.6+, Google Chrome, internet connection.
+Java JDK 11+, Maven 3.6+.
 
 ---
 
@@ -67,8 +67,5 @@ Output saved to: `/mnt/user-data/outputs/Stock_Market_Audit_Report_<timestamp>.x
 
 ```
 
----
-
 ## License
-
 Provided as-is for educational and commercial use.
