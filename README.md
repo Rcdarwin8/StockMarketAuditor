@@ -207,7 +207,4 @@ By studying this project, you'll learn:
 
 This project is provided as-is for educational and commercial use.
 
-
 ---
-
-**Happy Auditing! 📊✨**
