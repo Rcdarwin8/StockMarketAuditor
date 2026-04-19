@@ -1,0 +1,131 @@
+═══════════════════════════════════════════════════════════════════════
+🎯 STOCK MARKET AUDITOR - QUICK START GUIDE
+═══════════════════════════════════════════════════════════════════════
+
+📦 PREREQUISITES:
+─────────────────
+1. Java JDK 11 or higher installed
+   Check: java -version
+
+2. Maven 3.6+ installed
+   Check: mvn -version
+
+3. Google Chrome browser installed
+
+4. Internet connection for web scraping
+
+
+🚀 OPTION 1: RUN WITH MAVEN (RECOMMENDED)
+──────────────────────────────────────────
+1. Navigate to project directory:
+   cd /home/user/StockMarketAuditor
+
+2. Clean and install dependencies:
+   mvn clean install
+
+3. Run the application:
+   mvn exec:java -Dexec.mainClass="com.stockauditor.StockMarketAuditor"
+
+
+🚀 OPTION 2: BUILD JAR AND RUN
+──────────────────────────────
+1. Build the project:
+   cd /home/user/StockMarketAuditor
+   mvn clean package
+
+2. Run the JAR file:
+   java -jar target/stock-market-auditor-1.0-SNAPSHOT.jar
+
+
+🚀 OPTION 3: IDE EXECUTION
+──────────────────────────
+1. Import project into IntelliJ IDEA / Eclipse / NetBeans
+2. Open: src/main/java/com/stockauditor/StockMarketAuditor.java
+3. Right-click → Run 'StockMarketAuditor.main()'
+
+
+📊 WHAT HAPPENS WHEN YOU RUN:
+──────────────────────────────
+1. ✅ Chrome browser opens automatically
+2. ✅ Navigates to MoneyControl Top Gainers page
+3. ✅ Scrapes stock data from WebTable
+4. ✅ Calculates percentage changes
+5. ✅ Validates against website values
+6. ✅ Filters high performers (>5% change)
+7. ✅ Generates Excel report with formatting
+8. ✅ Saves to: /mnt/user-data/outputs/Stock_Market_Audit_Report_[timestamp].xlsx
+9. ✅ Closes browser and displays summary
+
+
+📁 OUTPUT LOCATION:
+───────────────────
+Reports are saved to: /mnt/user-data/outputs/
+Filename format: Stock_Market_Audit_Report_2026-01-02_10-30-45.xlsx
+
+
+⚙️ CONFIGURATION:
+─────────────────
+To modify threshold, output directory, or target URL:
+Edit: src/main/java/com/stockauditor/StockMarketAuditor.java
+
+HIGH_PERFORMANCE_THRESHOLD = 5.0  // Change to 3.0, 7.0, etc.
+OUTPUT_DIRECTORY = "/mnt/user-data/outputs/"
+
+
+🐛 TROUBLESHOOTING:
+───────────────────
+Problem: "ChromeDriver not found"
+Solution: mvn clean install -U
+
+Problem: "Table not loading"
+Solution: Check internet connection and website availability
+
+Problem: "Permission denied" on output directory
+Solution: mkdir -p /mnt/user-data/outputs && chmod 755 /mnt/user-data/outputs
+
+Problem: "No high performers found"
+Solution: Lower the threshold or check market conditions
+
+
+📚 ADDITIONAL RESOURCES:
+────────────────────────
+- Full documentation: README.md
+- Source code: src/main/java/com/stockauditor/
+- Dependencies: pom.xml
+
+
+✅ EXPECTED CONSOLE OUTPUT:
+───────────────────────────
+═══════════════════════════════════════════════════════════════
+🎯 DYNAMIC STOCK MARKET AUDITOR & EXCEL REPORTER
+WebTable Data Auditor & Automated Reporting System
+Tech Stack: Java | Selenium | Apache POI | XPath
+═══════════════════════════════════════════════════════════════
+
+🔧 STEP 1: Initializing WebDriver
+─────────────────────────────────────
+✅ WebDriver initialized successfully
+
+[... more logs ...]
+
+✅ Excel report generated successfully!
+📁 File location: /mnt/user-data/outputs/Stock_Market_Audit_Report_[timestamp].xlsx
+
+
+💡 TIPS:
+────────
+- First run may take longer (downloads ChromeDriver)
+- Scraping speed depends on internet connection
+- Excel formatting works best in Microsoft Excel or LibreOffice
+- Monitor console for real-time progress updates
+
+
+🎯 TARGET WEBSITE:
+──────────────────
+Primary: https://www.moneycontrol.com/stocks/marketstats/nsegainer/index.php
+This page shows real-time NSE top gainers with dynamic updates
+
+
+═══════════════════════════════════════════════════════════════════════
+Happy Auditing! 📊✨
+═══════════════════════════════════════════════════════════════════════

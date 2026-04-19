@@ -1,0 +1,273 @@
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                                                                             │
+│           🎯 DYNAMIC STOCK MARKET AUDITOR & EXCEL REPORTER                  │
+│                     SYSTEM ARCHITECTURE DIAGRAM                             │
+│                                                                             │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+
+┌───────────────────────────────────────────────────────────────────────────┐
+│  LAYER 1: WEB SCRAPING (Selenium + XPath)                                 │
+└───────────────────────────────────────────────────────────────────────────┘
+                                    │
+                    ┌───────────────▼────────────────┐
+                    │   WebDriver Initialization     │
+                    │  (Chrome + WebDriverManager)   │
+                    └───────────────┬────────────────┘
+                                    │
+                    ┌───────────────▼────────────────┐
+                    │  Navigate to Target Website    │
+                    │  MoneyControl Top Gainers      │
+                    └───────────────┬────────────────┘
+                                    │
+                    ┌───────────────▼────────────────┐
+                    │   Wait for Dynamic Content     │
+                    │   (WebDriverWait - 15 sec)     │
+                    └───────────────┬────────────────┘
+                                    │
+        ┌───────────────────────────▼───────────────────────────┐
+        │          XPath Row/Column Indexing                    │
+        │  //table[contains(@class,'mctable')]//tr[i+1]/td[j]  │
+        └───────────────────────────┬───────────────────────────┘
+                                    │
+        ┌───────────────────────────▼───────────────────────────┐
+        │           Extract WebTable Data                       │
+        │  • Company Name (Column 1)                            │
+        │  • Previous Close (Column 3)                          │
+        │  • Current Price (Column 4)                           │
+        │  • Website % Change (Column 5) - for validation       │
+        └───────────────────────────┬───────────────────────────┘
+                                    │
+┌───────────────────────────────────▼───────────────────────────────────────┐
+│  LAYER 2: DATA PROCESSING (String Manipulation + Type Casting)           │
+└───────────────────────────────────────────────────────────────────────────┘
+                                    │
+        ┌───────────────────────────▼───────────────────────────┐
+        │          Data Cleaning Phase                          │
+        │  Remove: ₹, $, commas, spaces                         │
+        │  Input:  "₹2,450.75"                                  │
+        │  Output: 2450.75 (Double)                             │
+        └───────────────────────────┬───────────────────────────┘
+                                    │
+        ┌───────────────────────────▼───────────────────────────┐
+        │      Manual Calculation Phase                         │
+        │  Formula: ((Current - Prev) / Prev) × 100             │
+        │  Example: ((2580 - 2450) / 2450) × 100 = 5.31%        │
+        └───────────────────────────┬───────────────────────────┘
+                                    │
+        ┌───────────────────────────▼───────────────────────────┐
+        │          Validation Phase                             │
+        │  Compare: Calculated vs Website Value                 │
+        │  Tolerance: ±0.1% (for rounding)                      │
+        │  Result: ✓ MATCH or ✗ MISMATCH                       │
+        └───────────────────────────┬───────────────────────────┘
+                                    │
+        ┌───────────────────────────▼───────────────────────────┐
+        │        StockData Object Creation                      │
+        │  POJO with all calculated fields                      │
+        │  • companyName                                        │
+        │  • previousClose                                      │
+        │  • currentPrice                                       │
+        │  • calculatedChangePercent                            │
+        │  • websiteChangePercent                               │
+        │  • validationPassed (boolean)                         │
+        │  • validationStatus (String)                          │
+        └───────────────────────────┬───────────────────────────┘
+                                    │
+┌───────────────────────────────────▼───────────────────────────────────────┐
+│  LAYER 3: FILTERING & BUSINESS LOGIC                                     │
+└───────────────────────────────────────────────────────────────────────────┘
+                                    │
+        ┌───────────────────────────▼───────────────────────────┐
+        │     Filter High Performers                            │
+        │  Threshold: Change > 5.0%                             │
+        │  Java Stream API filtering                            │
+        └───────────────────────────┬───────────────────────────┘
+                                    │
+        ┌───────────────────────────▼───────────────────────────┐
+        │       Validation Statistics                           │
+        │  • Total stocks analyzed                              │
+        │  • Validations passed count                           │
+        │  • High performers count                              │
+        │  • Average change percentage                          │
+        └───────────────────────────┬───────────────────────────┘
+                                    │
+┌───────────────────────────────────▼───────────────────────────────────────┐
+│  LAYER 4: EXCEL GENERATION (Apache POI)                                  │
+└───────────────────────────────────────────────────────────────────────────┘
+                                    │
+        ┌───────────────────────────▼───────────────────────────┐
+        │        XSSFWorkbook Creation                          │
+        │  Create new .xlsx workbook                            │
+        └───────────────────────────┬───────────────────────────┘
+                                    │
+        ┌───────────────────────────▼───────────────────────────┐
+        │          Style Definition                             │
+        │  • Title style (Dark Blue, 16pt, Bold)                │
+        │  • Header style (Dark Green, White text)              │
+        │  • Currency style (₹#,##0.00)                         │
+        │  • Percent style (0.00%)                              │
+        │  • Validation Pass (Light Green)                      │
+        │  • Validation Fail (Rose Red)                         │
+        └───────────────────────────┬───────────────────────────┘
+                                    │
+        ┌───────────────────────────▼───────────────────────────┐
+        │         Write Data Rows                               │
+        │  For each high-performing stock:                      │
+        │  • Apply appropriate cell style                       │
+        │  • Format numbers/percentages                         │
+        │  • Add conditional colors                             │
+        └───────────────────────────┬───────────────────────────┘
+                                    │
+        ┌───────────────────────────▼───────────────────────────┐
+        │      Add Summary Section                              │
+        │  Merged cells with statistics                         │
+        │  Yellow background for visibility                     │
+        └───────────────────────────┬───────────────────────────┘
+                                    │
+        ┌───────────────────────────▼───────────────────────────┐
+        │        Auto-Size Columns                              │
+        │  Calculate optimal width + padding                    │
+        └───────────────────────────┬───────────────────────────┘
+                                    │
+        ┌───────────────────────────▼───────────────────────────┐
+        │     Save to File System                               │
+        │  Location: /mnt/user-data/outputs/                    │
+        │  Filename: Stock_Market_Audit_Report_[timestamp].xlsx │
+        └───────────────────────────────────────────────────────┘
+
+
+┌───────────────────────────────────────────────────────────────────────────┐
+│  DATA FLOW EXAMPLE                                                        │
+└───────────────────────────────────────────────────────────────────────────┘
+
+WEB TABLE (Raw HTML)
+─────────────────────
+| Company Name        | ... | Prev Close | Current Price | % Change |
+|---------------------|-----|------------|---------------|----------|
+| Reliance Industries | ... | ₹2,450.00  | ₹2,580.00     | +5.31%   |
+
+
+SCRAPING & CLEANING
+───────────────────
+companyName = "Reliance Industries"
+prevCloseText = "₹2,450.00" → cleaned → 2450.00 (Double)
+currentPriceText = "₹2,580.00" → cleaned → 2580.00 (Double)
+websiteChangeText = "+5.31%" → cleaned → 5.31 (Double)
+
+
+CALCULATION
+───────────
+calculatedChange = ((2580.00 - 2450.00) / 2450.00) × 100 = 5.31%
+
+
+VALIDATION
+──────────
+|calculated - website| = |5.31 - 5.31| = 0.00 ≤ 0.1 → ✓ MATCH
+
+
+FILTERING
+─────────
+5.31% > 5.0% → HIGH PERFORMER → Include in Excel report
+
+
+EXCEL OUTPUT
+────────────
+| Company Name         | Prev Close | Curr Price | Calc % | Web % | Status  | Result |
+|----------------------|------------|------------|--------|-------|---------|--------|
+| Reliance Industries  | ₹2,450.00  | ₹2,580.00  | 5.31%  | 5.31% | ✓ MATCH | PASSED |
+  [Formatted with green background for validation pass]
+
+
+┌───────────────────────────────────────────────────────────────────────────┐
+│  KEY TECHNOLOGIES & THEIR ROLES                                           │
+└───────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────┬─────────────────────────────────────────────────────┐
+│  TECHNOLOGY         │  ROLE IN PROJECT                                    │
+├─────────────────────┼─────────────────────────────────────────────────────┤
+│ Selenium WebDriver  │ • Browser automation                                │
+│                     │ • Dynamic content handling                          │
+│                     │ • XPath navigation                                  │
+│                     │ • Wait conditions                                   │
+├─────────────────────┼─────────────────────────────────────────────────────┤
+│ Apache POI (XSSF)   │ • .xlsx file creation                               │
+│                     │ • Cell styling & formatting                         │
+│                     │ • Workbook/Sheet management                         │
+│                     │ • Auto-sizing & merging                             │
+├─────────────────────┼─────────────────────────────────────────────────────┤
+│ Java 11 Streams     │ • Filtering high performers                         │
+│                     │ • Statistics calculation                            │
+│                     │ • Data transformation                               │
+├─────────────────────┼─────────────────────────────────────────────────────┤
+│ WebDriverManager    │ • Automatic ChromeDriver download                   │
+│                     │ • Version compatibility handling                    │
+├─────────────────────┼─────────────────────────────────────────────────────┤
+│ Maven               │ • Dependency management                             │
+│                     │ • Build automation                                  │
+│                     │ • Project structure                                 │
+└─────────────────────┴─────────────────────────────────────────────────────┘
+
+
+┌───────────────────────────────────────────────────────────────────────────┐
+│  XPATH STRATEGY BREAKDOWN                                                 │
+└───────────────────────────────────────────────────────────────────────────┘
+
+Base Table XPath:
+//table[contains(@class, 'mctable')]
+
+Row Navigation (skip header at position 1):
+//table[contains(@class, 'mctable')]//tr[2]     → First data row
+//table[contains(@class, 'mctable')]//tr[3]     → Second data row
+//table[contains(@class, 'mctable')]//tr[i+1]   → i-th data row (loop)
+
+Cell Extraction (column indexing):
+rowXPath + "/td[1]//a"   → Company Name (inside anchor tag)
+rowXPath + "/td[3]"      → Previous Close Price
+rowXPath + "/td[4]"      → Current Price
+rowXPath + "/td[5]"      → Website's % Change
+
+
+┌───────────────────────────────────────────────────────────────────────────┐
+│  ERROR HANDLING STRATEGY                                                  │
+└───────────────────────────────────────────────────────────────────────────┘
+
+1. WebDriver Initialization
+   └─→ Catch: WebDriverException
+       └─→ Action: Log error, attempt fallback driver
+
+2. Page Loading
+   └─→ Catch: TimeoutException
+       └─→ Action: Retry with increased wait time
+
+3. Element Not Found
+   └─→ Catch: NoSuchElementException
+       └─→ Action: Skip row, log warning, continue
+
+4. Data Parsing
+   └─→ Catch: NumberFormatException
+       └─→ Action: Return 0.0, log invalid data
+
+5. Excel Generation
+   └─→ Catch: IOException
+       └─→ Action: Check permissions, log error
+
+6. Empty Results
+   └─→ Validation: if (stockList.isEmpty())
+       └─→ Action: Display message, suggest threshold adjustment
+
+
+┌───────────────────────────────────────────────────────────────────────────┐
+│  PERFORMANCE CONSIDERATIONS                                               │
+└───────────────────────────────────────────────────────────────────────────┘
+
+• Scraping Speed: ~2-3 seconds per stock (network dependent)
+• Total Runtime: ~30-60 seconds for 15 stocks
+• Memory Usage: ~150-200 MB (with Chrome browser)
+• Excel Generation: <1 second for 15 stocks
+• Optimization: Limit to 15 stocks for demo (configurable)
+
+
+═══════════════════════════════════════════════════════════════════════════
+                        END OF ARCHITECTURE DIAGRAM
+═══════════════════════════════════════════════════════════════════════════
